@@ -20,7 +20,7 @@ class HomeController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth');
+        $this->middleware('auth', ['except' => ['open_homepage','product_detail']]);
     }
 
     /**
@@ -30,6 +30,7 @@ class HomeController extends Controller
      */
     public function index()
     {
+        // dd('ia m in');
         if(Auth::check() && Auth::user()->isAdmin()){
              return view('admin.dashboard');
         }else{
@@ -37,7 +38,21 @@ class HomeController extends Controller
         }    
     }
 
+    public function open_homepage()
+    {
+        // dd('ia m in ');
+        $new_pro = Product::where('product_id',0)->orderBy('id', 'desc')->limit(3)->get();
+        $latest_pro = Product::where('product_id',0)->where('category_id',1)->orderBy('id', 'desc')->limit(4)->get();
+        $deals = DB::table('products')
+                    ->select(DB::raw('compare_price-price as diff_price,FLOOR(((compare_price-price)/compare_price)*100) as discount,products.*'))
+                    ->where('product_id',0)->orderby('diff_price','desc')->limit(4)->get();
+        $women_deals = DB::table('products')
+                    ->select(DB::raw('compare_price-price as diff_price,FLOOR(((compare_price-price)/compare_price)*100) as discount,products.*'))
+                    ->where('product_id',0)->where('subcategory_id',7) ->orderby('diff_price','desc')->limit(3)->get();
+        // dd($women_deals);
 
+        return view('homePage')->with('new_pro',$new_pro)->with('latest_pro',$latest_pro)->with('top_deals',$deals)->with('women_deals',$women_deals);
+    }
 
     public function open_widgets()
     {
@@ -56,7 +71,7 @@ class HomeController extends Controller
 
     public function logout_user(){
         Auth()->logout();
-        return redirect('/');
+        return redirect('/login');
     }
     public function save_category(Request $request){
         $cat = new Category; 
@@ -201,6 +216,15 @@ class HomeController extends Controller
        $sub_category = Category::where('category_id',$dycrypt_id)->get();
        return view('admin.subcategoryList')->with('sub_category', $sub_category);
        // dd($sub_category);
+    }
+    public function product_detail($pro_id)
+    {
+        $dycrypt_id = Crypt::decrypt($pro_id);
+        $product = Product::select(DB::raw('compare_price-price as diff_price,FLOOR(((compare_price-price)/compare_price)*100) as discount,products.*'))
+                ->where('id',$dycrypt_id)->first();
+        $product->other_images = json_decode($product->other_images);
+        $variants =  Product::where('product_id',$dycrypt_id)->get();
+        return view('frontend.productDetail')->with('product', $product)->with('variants', $variants);
     }
     
 }

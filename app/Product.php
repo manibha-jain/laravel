@@ -9,6 +9,6 @@ class Product extends Model
     //
      protected $table = 'products';
      protected $casts = [
-        'other_images' => 'array'
+        'other_images' => 'array',
     ];
 }

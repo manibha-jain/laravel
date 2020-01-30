@@ -19,13 +19,9 @@
 Route::get('/login', function () {
     return view('auth.login');
 });
-Route::get('/', function () {
-    return view('homePage');
-});
-
-
+Route::get('/', 'HomeController@open_homepage')->name('homepage');
+Route::get('/product-detail/{pro_id}', 'HomeController@product_detail')->name('product_detail');
 Auth::routes();
-
 
 Route::get('/home', 'HomeController@index')->name('home');
 Route::get('/widgets-dash', 'HomeController@open_widgets')->name('widgets');
@@ -44,5 +40,6 @@ Route::get('/offers-form', 'HomeController@offers_form')->name('offers');
 Route::post('/create-offers', 'HomeController@save_offer')->name('create_offer');
 Route::get('/logout', 'HomeController@logout_user')->name('logout');
 Route::get('protected', ['middleware' => ['auth', 'admin'], function() {
+
 }]);
 
