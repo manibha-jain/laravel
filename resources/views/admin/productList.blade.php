@@ -33,7 +33,7 @@
 					      	<td>{{$i+1}}</td>
 					      	<td>{{$products[$i]->category}}</td>
 					      	<td>{{$products[$i]->name}}</td>
-					      	<td><img src="{{ asset('storage/'.$products[$i]->main_image) }}" style="width: 150px; height: 150px;"></td>
+					      	<td><img src="{{ url('/thumbnails/'.$products[$i]->big_thumbnail) }}"></td>
 					      	<td>{{$products[$i]->price}}</td>
 					      	<td>{{$products[$i]->quantity}}</td>
 					      	<?php

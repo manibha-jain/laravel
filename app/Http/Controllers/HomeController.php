@@ -6,10 +6,11 @@ use Session;
 use App\Category;
 use App\Product;
 use App\Offer;
+use App\Product_other_images;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
-
+use Image;
 
 class HomeController extends Controller
 {
@@ -89,34 +90,75 @@ class HomeController extends Controller
 
     public function save_product(Request $request){
         // dd('i am in',$request->file('other_images'));
-        $images = [];
-        foreach ($request->other_images as $photo) {
-            $filename = $photo->store('public');
-            $real_file_name =  explode('/',$filename);
-            array_push($images,$real_file_name[1]);
-        }
-        $image_json =  json_encode($images);
-
-        $main_image_path = $request->file('main_image')->store('public');
-        $splitstr =  explode('/',$main_image_path);
-        $pro = new Product; 
+        $main_image_name = uniqid().$request->file('main_image')->getClientOriginalExtension();
+        $image =Image::make($request->file('main_image'));
+        $destinationPath = public_path('/images');
+        $image->save($destinationPath.'/'.$main_image_name);
+        $thumb  = $this->save_product_images($request->file('main_image'));
+        $pro = new Product;
+        $pro->main_image = $main_image_name;
+        $pro->big_thumbnail = $thumb[0];
+        $pro->small_thumbnail = $thumb[1];
         $pro->category_id = $request->input('cat_name');
         $pro->subcategory_id = $request->input('sub_category');
         $pro->name = $request->input('product');
-        $pro->description = $request->input('description');
-        $pro->size = $request->input('size');
+        if($request->has('description')){
+            $pro->description = $request->input('description');
+        }
+        if($request->has('size')){
+            $pro->size = $request->input('size');
+        }
+        if($request->has('warranty')){
+            $pro->warranty = $request->input('warranty');
+        }
         $pro->price = $request->input('price');
         $pro->color = $request->input('color');
         $pro->compare_price = $request->input('comp_price');
         $pro->quantity = $request->input('quantity');
-        $pro->main_image = $splitstr[1];
         $pro->highlights = $request->input('editor1');
-        $pro->warranty = $request->input('warranty');
-        $pro->other_images = $image_json;
         $pro->save();
+
+        foreach ($request->other_images as $photo) {
+
+            $main_other_name = uniqid().$photo->getClientOriginalExtension();
+            $image =Image::make($photo);
+            $destinationPath = public_path('/images');
+            $image->save($destinationPath.'/'.$main_other_name);
+
+            $other_thumbs = $this->save_product_images($photo);
+            $others = new Product_other_images;
+            $others->product_id = $pro->id;
+            $others->actual_image = $main_other_name;
+            $others->big_thumbnail= $other_thumbs[0];
+            $others->small_thumbnail = $other_thumbs[1];
+            $others->save();
+        }
         Session::flash('message', 'Product saved Successfully!!!'); 
         return redirect('/products-form');
     }
+
+
+    public function save_product_images($image)
+    {
+        // big thumbnail
+
+        $big_thumbnail = uniqid().'.'.$image->getClientOriginalExtension();
+        $destinationPath = public_path('/thumbnails');
+        $img = Image::make($image->getRealPath());
+        $img->resize(200, 200, function ($constraint) {
+            $constraint->aspectRatio();
+        })->save($destinationPath.'/'.$big_thumbnail);
+
+        // small thumbnail
+        $small_thumbnail = uniqid().'.'.$image->getClientOriginalExtension();
+        $img->resize( 100, 100, function ($constraint) {
+            $constraint->aspectRatio();
+        })->save($destinationPath.'/'.$small_thumbnail);
+       
+         return[$big_thumbnail,$small_thumbnail];
+
+    }
+
     public function offers_form(){
         $cat = Category::all();
         return view('admin.offers')->with('catgs', $cat);
@@ -227,4 +269,34 @@ class HomeController extends Controller
         return view('frontend.productDetail')->with('product', $product)->with('variants', $variants);
     }
     
+     public function resizeImagePost(Request $request)
+    {
+        $this->validate($request, [
+            'title' => 'required',
+            'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+        ]);
+
+
+        $image = $request->file('image');
+        $input['imagename'] = time().'.'.$image->getClientOriginalExtension();
+     
+   
+        $destinationPath = public_path('/thumbnail');
+        $img = Image::make($image->getRealPath());
+        $img->resize(100, 100, function ($constraint) {
+            $constraint->aspectRatio();
+        })->save($destinationPath.'/'.$input['imagename']);
+
+
+        $destinationPath = public_path('/images');
+        $image->move($destinationPath, $input['imagename']);
+
+
+        $this->postImage->add($input);
+
+
+        return back()
+            ->with('success','Image Upload successful')
+            ->with('imageName',$input['imagename']);
+    }
 }

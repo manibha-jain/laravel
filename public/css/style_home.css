@@ -84,6 +84,7 @@ a:hover, a:focus {
   outline: none;
 }
 
+
 .primary-color {
   color: #F8694A;
 }
@@ -905,7 +906,7 @@ textarea.input {
 }
 
 .product.product-single .product-thumb>img {
-  width: 100%;
+  /*width: 100%;*/
 }
 
 .product.product-single .product-thumb:after {
@@ -1727,4 +1728,10 @@ textarea.input {
   [class*='col-xs'] {
     width: 100%;
   }
+}
+
+
+/*manibha xustom styling*/
+.custom-styling .slick-slide img {
+    display: inline;
 }

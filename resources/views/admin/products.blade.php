@@ -55,7 +55,7 @@
 								<div class="form-group">
 									<label class="col-md-2 control-label" for="name">Description</label>
 									<div class="col-md-10">
-										<textarea class="form-control" rows="5" id="comment" name="description" required></textarea>
+										<textarea class="form-control" rows="5" id="comment" name="description"></textarea>
 									</div>
 								</div>
 								<div class="form-group">
@@ -67,7 +67,7 @@
 								<div class="form-group">
 									<label class="col-md-2 control-label" for="name">Warranty</label>
 									<div class="col-md-10">
-										<textarea class="form-control" rows="3" id="warranty" name="warranty" required></textarea>
+										<textarea class="form-control" rows="3" id="warranty" name="warranty"></textarea>
 									</div>
 								</div>
 								<div class="form-group">
@@ -79,13 +79,13 @@
 								<div class="form-group">
 									<label class="col-md-2 control-label" for="name">Size</label>
 									<div class="col-md-10">
-										<input id="size" name="size" type="text" placeholder="size" class="form-control" required>
+										<input id="size" name="size" type="text" placeholder="size" class="form-control">
 									</div>
 								</div>
 								<div class="form-group">
 									<label class="col-md-2 control-label" for="name">Color</label>
 									<div class="col-md-10">
-										<input id="color" name="color" type="text" placeholder="color" class="form-control" required>
+										<input id="color" name="color" type="color" placeholder="color" class="form-control" required>
 									</div>
 								</div>
 								<div class="form-group">

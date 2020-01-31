@@ -59,9 +59,9 @@
 	      
 					    $parameter= Crypt::encrypt($new_pro[$i]->id);
 					?>
-				<div class="col-md-4 col-sm-6">
-					<a class="banner banner-1" href="{{url('/product-detail/'.$parameter)}}">
-						<img src="{{ asset('storage/'.$new_pro[$i]->main_image) }}" height="450px" width="100px" alt="">
+				<div class="col-md-4 col-sm-6" style="text-align: center">
+					<a class="banner-1" href="{{url('/product-detail/'.$parameter)}}" >
+						<img src="{{ url('/thumbnails/'.$new_pro[$i]->big_thumbnail) }}" alt="">
 						<div class="banner-caption text-center">
 							<!-- <h2 class="white-color">NEW COLLECTION</h2> -->
 						</div>
@@ -107,14 +107,14 @@
 				<!-- /banner -->
 
 				<!-- Product Slick -->
-				<div class="col-md-12 col-sm-6 col-xs-6">
+				<div class="col-md-12 col-sm-6 col-xs-6" >
 					<div class="row">
-						<div id="product-slick-1" class="product-slick">
-							@for ($i = 0; $i < count($top_deals); $i++)
+						<div id="product-slick-1" class="product-slick custom-styling">
+							@for ($i = 1; $i < count($top_deals); $i++)
 							<!-- Product Single -->
 							<div class="col-md-3 col-sm-6 col-xs-6">
 								<div class="product product-single">
-									<div class="product-thumb">
+									<div class="product-thumb" style="text-align: center;">
 										<div class="product-label">
 											<span class="sale">-{{$top_deals[$i]->discount}}%</span>
 										</div>
@@ -128,7 +128,7 @@
 										    $parameter= Crypt::encrypt($top_deals[$i]->id);
 										?>
 										<a href="{{url('/product-detail/'.$parameter)}}" class="main-btn quick-view" role="button"><i class="fa fa-search-plus"></i> Quick view</a>
-										<img src="{{ asset('storage/'.$top_deals[$i]->main_image) }}" alt="" height="450px" width="100px">
+										<img src="{{ url('/thumbnails/'.$top_deals[$i]->big_thumbnail) }}" alt="">
 									</div>
 									<div class="product-body">
 										<h3 class="product-price">${{$top_deals[$i]->price}} <del class="product-old-price">${{$top_deals[$i]->compare_price}}</del></h3>
@@ -229,7 +229,7 @@
 				<!-- Product Single -->
 				<div class="col-md-3 col-sm-6 col-xs-6">
 					<div class="product product-single">
-						<div class="product-thumb">
+						<div class="product-thumb" style="text-align: center;">
 							<div class="product-label">
 								<span>New</span>
 								<!-- <span class="sale">-20%</span> -->
@@ -240,7 +240,7 @@
 							?>
 							<!-- <button class="main-btn quick-view"><i class="fa fa-search-plus"></i> Quick view</button> -->
 							
-							<img src="{{ asset('storage/'.$latest_pro[$i]->main_image) }}" height="350px" width="100px">
+							<img src="{{ url('/thumbnails/'.$latest_pro[$i]->big_thumbnail) }}">
 						</div>
 						<div class="product-body">
 							<h3 class="product-price">${{$latest_pro[$i]->price}} <del class="product-old-price">${{$latest_pro[$i]->compare_price}}</del></h3>
@@ -282,7 +282,7 @@
 				<!-- /banner -->
 				@for ($i = 0; $i < count($women_deals); $i++)
 					<!-- Product Single -->
-					<div class="col-md-3 col-sm-6 col-xs-6">
+					<div class="col-md-3 col-sm-6 col-xs-6" style="text-align: center">
 						<div class="product product-single">
 							<div class="product-thumb">
 								<div class="product-label">
@@ -293,7 +293,7 @@
 								    $parameter= Crypt::encrypt($women_deals[$i]->id);
 								?>
 								<button class="main-btn quick-view"><i class="fa fa-search-plus"></i> Quick view</button>
-								<img src="{{ asset('storage/'.$women_deals[$i]->main_image) }}" alt="" height="350px" width="100px">
+								<img src="{{ url('/thumbnails/'.$women_deals[$i]->big_thumbnail) }}" alt="">
 							</div>
 							<div class="product-body">
 								<h3 class="product-price">${{$women_deals[$i]->price}} <del class="product-old-price">${{$women_deals[$i]->compare_price}}</del></h3>
