@@ -20,26 +20,26 @@
 			<!-- row -->
 			<div class="row">
 				<!--  Product Details -->
-				<div class="product product-details clearfix">
+				<div class="product product-details clearfix custom-styling">
 					<div class="col-md-6">
 						<div id="product-main-view">
 							<div class="product-view">
-								<img src="{{ asset('storage/'.$product->main_image) }}" alt="" height="500px">
+								<img src="{{url('/images/'.$product->main_image) }}" alt="">
 							</div>
-							@for ($i = 0; $i < count($product->other_images); $i++)
+							<!-- @for ($i = 0; $i < count($other_images); $i++)
 							<div class="product-view">
-								<img src="{{ asset('storage/'.$product->other_images[$i]) }}" alt="" height="400px">
+								<img src="{{url('/images/'.$other_images[$i]['actual_image']) }}" alt="">
 							</div>
-							@endfor
+							@endfor -->
 						</div>
 
-						<div id="product-view">
-							@for ($i = 0; $i < count($product->other_images); $i++)
+						<!-- <div id="product-view">
+							@for ($i = 0; $i < count($other_images); $i++)
 							<div class="product-view">
-								<img src="{{ asset('storage/'.$product->other_images[$i]) }}" alt="" height="100px">
+								<img src="{{url('/thumbnails/'.$other_images[$i]['small_thumbnail']) }}" alt="">
 							</div>
 							@endfor
-						</div>
+						</div> -->
 					</div>
 					<div class="col-md-6">
 						<div class="product-body">
@@ -66,9 +66,7 @@
 								<ul class="color-option">
 									<li><span class="text-uppercase">Color:</span></li>
 									<li class="active"><a href="#" style="background-color:{{$product->color}};"></a></li>
-									@for ($i = 0; $i < count($variants); $i++)
-									<li><a href="#" style="background-color:{{$variants[$i]->color}};"></a></li>
-									@endfor
+									
 								</ul>
 							</div>
 

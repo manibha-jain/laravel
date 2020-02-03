@@ -110,7 +110,7 @@
 				<div class="col-md-12 col-sm-6 col-xs-6" >
 					<div class="row">
 						<div id="product-slick-1" class="product-slick custom-styling">
-							@for ($i = 1; $i < count($top_deals); $i++)
+							@for ($i = 0; $i < count($top_deals); $i++)
 							<!-- Product Single -->
 							<div class="col-md-3 col-sm-6 col-xs-6">
 								<div class="product product-single">
@@ -139,7 +139,7 @@
 											<i class="fa fa-star"></i>
 											<i class="fa fa-star-o empty"></i>
 										</div> -->
-										<h2 class="product-name"><a href="#">{{$top_deals[$i]->name}}</a></h2>
+										<h2 class="product-name"><a href="{{url('/product-detail/'.$parameter)}}">{{$top_deals[$i]->name}}</a></h2>
 										<div class="product-btns">
 											<button class="main-btn icon-btn"><i class="fa fa-heart"></i></button>
 											<button class="main-btn icon-btn"><i class="fa fa-exchange"></i></button>
@@ -292,7 +292,7 @@
 								<?php
 								    $parameter= Crypt::encrypt($women_deals[$i]->id);
 								?>
-								<button class="main-btn quick-view"><i class="fa fa-search-plus"></i> Quick view</button>
+								<a href="{{url('/product-detail/'.$parameter)}}" class="main-btn quick-view" role="button"><i class="fa fa-search-plus"></i> Quick view</a>
 								<img src="{{ url('/thumbnails/'.$women_deals[$i]->big_thumbnail) }}" alt="">
 							</div>
 							<div class="product-body">
