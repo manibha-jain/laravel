@@ -1,6 +1,13 @@
 @extends('layouts.frontend.layout')
 @section('content')	
 <!-- BREADCRUMB -->
+<style type="text/css">
+	.carousel-inner>.item>a>img, .carousel-inner>.item>img, .img-responsive, .thumbnail a>img, .thumbnail>img{
+		display: inline;
+		max-height:-webkit-fill-available;
+	}
+	
+</style>
 	<div id="breadcrumb">
 		<div class="container">
 			<ul class="breadcrumb">
@@ -22,25 +29,48 @@
 				<!--  Product Details -->
 				<div class="product product-details clearfix custom-styling">
 					<div class="col-md-6">
-						<div id="product-main-view">
-							<div class="product-view">
-								<img src="{{url('/images/'.$product->main_image) }}" alt="">
-							</div>
-							<!-- @for ($i = 0; $i < count($other_images); $i++)
-							<div class="product-view">
-								<img src="{{url('/images/'.$other_images[$i]['actual_image']) }}" alt="">
-							</div>
-							@endfor -->
-						</div>
+						<div id="myCarousel" class="carousel slide" data-ride="carousel">
+					   		<!-- Indicators -->
+						    <ol class="carousel-indicators">
+						    	<li data-target="#myCarousel" data-slide-to="0" class="active"></li>
+						    	@for ($i = 0; $i < count($other_images); $i++)
+						      		<li data-target="#myCarousel" data-slide-to="{{$i+1}}"></li>
+						      	@endfor
+						    </ol>
 
-						<!-- <div id="product-view">
+						    <!-- Wrapper for slides -->
+						    <div class="carousel-inner">
+						    	<div class="item active" style="text-align: center;height:500px">
+						    		<img src="{{url('/images/'.$product->main_image) }}" alt="" style="margin-top: 3%">
+						    	</div>
+						    	@for ($i = 0; $i < count($other_images); $i++)
+						      		<div class="item" style="text-align: center;height:500px">
+							        	<img src="{{url('/images/'.$other_images[$i]['actual_image']) }}" alt="" style="margin-top: 3%">
+							      </div>
+						      	@endfor
+						      
+						    </div>
+
+						    <!-- Left and right controls -->
+						    <a class="left carousel-control" href="#myCarousel" data-slide="prev">
+						      <span class="glyphicon glyphicon-chevron-left"></span>
+						      <span class="sr-only">Previous</span>
+						    </a>
+						    <a class="right carousel-control" href="#myCarousel" data-slide="next">
+						      <span class="glyphicon glyphicon-chevron-right"></span>
+						      <span class="sr-only">Next</span>
+						    </a>
+						 </div>
+
+						 <div>
 							@for ($i = 0; $i < count($other_images); $i++)
-							<div class="product-view">
-								<img src="{{url('/thumbnails/'.$other_images[$i]['small_thumbnail']) }}" alt="">
-							</div>
+							<span style="padding: 50px;">
+									<img src="{{url('/thumbnails/'.$other_images[$i]['small_thumbnail']) }}" alt="">
+							</span>
 							@endfor
-						</div> -->
+						</div>
 					</div>
+					
 					<div class="col-md-6">
 						<div class="product-body">
 							<div class="product-label">
