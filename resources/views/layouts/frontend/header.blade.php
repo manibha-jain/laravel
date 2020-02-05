@@ -40,7 +40,7 @@
                         <!-- Logo -->
                         <div class="header-logo">
                             <a class="logo" href="#">
-                                <img src="./img/logo.png" alt="">
+                                <img src="{{ url('/images/logo.png') }}" alt="">
                             </a>
                         </div>
                         <!-- /Logo -->

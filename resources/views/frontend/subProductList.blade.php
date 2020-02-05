@@ -7,92 +7,72 @@
 			<!-- row -->
 			<div class="row">
 				<!-- ASIDE -->
+
 				<div id="aside" class="col-md-3">
-					<!-- aside widget -->
-					<div class="aside">
-						<h3 class="aside-title">Shop by:</h3>
-						<ul class="filter-list">
-							<li><span class="text-uppercase">color:</span></li>
-							<li><a href="#" style="color:#FFF; background-color:#8A2454;">Camelot</a></li>
-							<li><a href="#" style="color:#FFF; background-color:#475984;">East Bay</a></li>
-							<li><a href="#" style="color:#FFF; background-color:#BF6989;">Tapestry</a></li>
-							<li><a href="#" style="color:#FFF; background-color:#9A54D8;">Medium Purple</a></li>
-						</ul>
+					<form class="form-horizontal" action="{{url('filter_subproducts/'.$subcat_id)}}" method="post" enctype="multipart/form-data">
+						{{ csrf_field() }}
+						<!-- aside widget -->
+						<div class="aside">
+							<h3 class="aside-title">Filter By Price:</h3>
+							<input type="text" class="js-range-slider" name="my_range" value="" />
+						</div>
+						<!-- aside widget -->
 
-						<ul class="filter-list">
-							<li><span class="text-uppercase">Size:</span></li>
-							<li><a href="#">X</a></li>
-							<li><a href="#">XL</a></li>
-						</ul>
+						<!-- aside widget -->
+						@if(count($colors) > 0)
+						<div class="aside">
+							<h3 class="aside-title">Filter By Color:</h3>
+							<ul class="color-option">
+								<!-- <li class="active"><a href="#" style="background-color:#BF6989;"></a></li> -->
+								@foreach( $colors as $color)
+								<li class="form-class color"><a href="#" style="background-color:{{$color}};"></a></li>
+								@endforeach
+							</ul>
+						</div>
+						@endif
+						<!-- /aside widget -->
 
-						<ul class="filter-list">
-							<li><span class="text-uppercase">Price:</span></li>
-							<li><a href="#">MIN: $20.00</a></li>
-							<li><a href="#">MAX: $120.00</a></li>
-						</ul>
-
-						<ul class="filter-list">
-							<li><span class="text-uppercase">Gender:</span></li>
-							<li><a href="#">Men</a></li>
-						</ul>
-
-						<button class="primary-btn">Clear All</button>
-					</div>
-					<!-- /aside widget -->
-
-					<!-- aside widget -->
-					<div class="aside">
-						<h3 class="aside-title">Filter by Price</h3>
-						<div id="price-slider"></div>
-					</div>
-					<!-- aside widget -->
-
-					<!-- aside widget -->
-					<div class="aside">
-						<h3 class="aside-title">Filter By Color:</h3>
-						<ul class="color-option">
-							<li><a href="#" style="background-color:#475984;"></a></li>
-							<li><a href="#" style="background-color:#8A2454;"></a></li>
-							<li class="active"><a href="#" style="background-color:#BF6989;"></a></li>
-							<li><a href="#" style="background-color:#9A54D8;"></a></li>
-							<li><a href="#" style="background-color:#675F52;"></a></li>
-							<li><a href="#" style="background-color:#050505;"></a></li>
-							<li><a href="#" style="background-color:#D5B47B;"></a></li>
-						</ul>
-					</div>
-					<!-- /aside widget -->
-
-					<!-- aside widget -->
-					<div class="aside">
-						<h3 class="aside-title">Filter By Size:</h3>
-						<ul class="size-option">
-							<li class="active"><a href="#">S</a></li>
-							<li class="active"><a href="#">XL</a></li>
-							<li><a href="#">SL</a></li>
-						</ul>
-					</div>
+						<!-- aside widget -->
+						@if(count($sizes) > 0)
+						<div class="aside">
+							<h3 class="aside-title">Filter By Size:</h3>
+							<ul class="size-option">
+								@foreach( $sizes as $size)
+								<div class="checkbox">
+								  <label><input type="checkbox" value="{{$size}}" name="brand">{{$size}}</label>
+								</div>
+								@endforeach
+							</ul>
+						</div>
+						@endif
 					<!-- /aside widget -->
 
 					<!-- aside widget -->
 					<div class="aside">
 						<h3 class="aside-title">Filter by Brand</h3>
-						<ul class="list-links">
-							<li><a href="#">Nike</a></li>
-							<li><a href="#">Adidas</a></li>
-							<li><a href="#">Polo</a></li>
-							<li><a href="#">Lacost</a></li>
-						</ul>
+						<div class="checkbox">
+						  <label><input type="checkbox" value="" name="brand">Nike</label>
+						</div>
+						<div class="checkbox">
+						  <label><input type="checkbox" value="" name="brand">Adidas</label>
+						</div>
+						<div class="checkbox">
+						  <label><input type="checkbox" value="" name="brand">Polo</label>
+						</div>
+						<div class="checkbox">
+						  <label><input type="checkbox" value="" name="brand">Lacost</label>
+						</div>
 					</div>
 					<!-- /aside widget -->
-
+					</form>
 					<!-- aside widget -->
-					<div class="aside">
+					<!-- <div class="aside">
 						<h3 class="aside-title">Filter by Gender</h3>
 						<ul class="list-links">
 							<li class="active"><a href="#">Men</a></li>
 							<li><a href="#">Women</a></li>
 						</ul>
-					</div>
+					</div> -->
 					<!-- /aside widget -->
 
 					<!-- aside widget -->
@@ -201,4 +181,27 @@
 		<!-- /container -->
 	</div>
 	<!-- /section -->
+
+	 <script type="text/javascript">
+		$(document).ready(function () {
+		    $(".js-range-slider").ionRangeSlider({
+		        min: 100,
+		         max: "{{$max_price}}",
+		        from: 550
+		    });
+
+		    $('.form-class').on('click',function(){
+		    	if($(this).hasClass('active')){
+		    		$(this).removeClass('active')
+		    	}else{
+		    		$(this).addClass('active')
+		    	}
+		    });
+	 	});
+
+	 	$()
+	 </script>
 @endsection
+
+
+	
