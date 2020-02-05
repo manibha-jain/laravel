@@ -8,7 +8,9 @@ class Product extends Model
 {
     //
      protected $table = 'products';
-     protected $casts = [
-        'other_images' => 'array',
-    ];
+  
+    public function images()
+    {
+        return $this->hasMany('App\Product_other_images');
+    }
 }

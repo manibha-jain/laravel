@@ -29,7 +29,7 @@
 				<!--  Product Details -->
 				<div class="product product-details clearfix custom-styling">
 					<div class="col-md-6">
-						<div id="myCarousel" class="carousel slide" data-ride="carousel">
+						<div id="myCarousel" class="carousel slide" data-ride="carousel" data-interval="false">
 					   		<!-- Indicators -->
 						    <ol class="carousel-indicators">
 						    	<li data-target="#myCarousel" data-slide-to="0" class="active"></li>
@@ -41,7 +41,7 @@
 						    <!-- Wrapper for slides -->
 						    <div class="carousel-inner">
 						    	<div class="item active" style="text-align: center;height:500px">
-						    		<img src="{{url('/images/'.$product->main_image) }}" alt="" style="margin-top: 3%">
+						    		<img src="{{url('/images/'.$product->main_image) }}" alt="" style="margin-top: 3%" >
 						    	</div>
 						    	@for ($i = 0; $i < count($other_images); $i++)
 						      		<div class="item" style="text-align: center;height:500px">
@@ -65,7 +65,7 @@
 						 <div>
 							@for ($i = 0; $i < count($other_images); $i++)
 							<span style="padding: 50px;">
-									<img src="{{url('/thumbnails/'.$other_images[$i]['small_thumbnail']) }}" alt="">
+								<img src="{{url('/thumbnails/'.$other_images[$i]['small_thumbnail']) }}" alt="">
 							</span>
 							@endfor
 						</div>
@@ -276,4 +276,5 @@
 		<!-- /container -->
 	</div>
 	<!-- /section -->
+	
 @endsection

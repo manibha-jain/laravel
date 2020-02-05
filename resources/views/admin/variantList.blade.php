@@ -31,7 +31,7 @@
 					      <tr>
 					      	<td>{{$i+1}}</td>
 					      	<td>{{$variants[$i]->name}}</td>
-					      	<td><img src="{{ asset('storage/'.$variants[$i]->main_image) }}" style="width: 150px; height: 150px;"></td>
+					      	<td><img src="{{ url('/thumbnails/'.$variants[$i]->big_thumbnail)}}" style="width: 150px; height: 150px;"></td>
 					      	<td>{{$variants[$i]->price}}</td>
 					      	<td>{{$variants[$i]->color}}</td>
 					      	<td>{{$variants[$i]->quantity}}</td>

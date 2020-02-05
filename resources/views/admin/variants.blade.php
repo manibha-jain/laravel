@@ -35,13 +35,13 @@
 								<div class="form-group">
 									<label class="col-md-2 control-label" for="name">Color</label>
 									<div class="col-md-10">
-										<input id="color" name="color" type="text" placeholder="color" class="form-control" required>
+										<input id="color" name="color" type="color" placeholder="color" class="form-control" required>
 									</div>
 								</div>
 								<div class="form-group">
 									<label class="col-md-2 control-label" for="name">Size</label>
 									<div class="col-md-10">
-										<input id="size" name="size" type="text" placeholder="size" class="form-control" required>
+										<input id="size" name="size" type="text" placeholder="size" class="form-control">
 									</div>
 								</div>
 								<div class="form-group">

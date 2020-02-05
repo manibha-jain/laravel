@@ -21,7 +21,7 @@ class HomeController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth', ['except' => ['open_homepage','product_detail']]);
+        $this->middleware('auth', ['except' => ['open_homepage','product_detail','sub_product_list']]);
     }
 
     /**
@@ -42,6 +42,10 @@ class HomeController extends Controller
     public function open_homepage()
     {
         // dd('ia m in ');
+        $category = Category::with('children')
+                        ->where('category_id',0)
+                        ->get()->toArray();
+
         $new_pro = Product::where('product_id',0)->orderBy('id', 'desc')->limit(3)->get();
         $latest_pro = Product::where('product_id',0)->where('category_id',1)->orderBy('id', 'desc')->limit(4)->get();
         $deals = DB::table('products')
@@ -52,7 +56,8 @@ class HomeController extends Controller
                     ->where('product_id',0)->where('subcategory_id',7) ->orderby('diff_price','desc')->limit(3)->get();
         // dd($women_deals);
 
-        return view('homePage')->with('new_pro',$new_pro)->with('latest_pro',$latest_pro)->with('top_deals',$deals)->with('women_deals',$women_deals);
+        return view('homePage')->with('new_pro',$new_pro)->with('latest_pro',$latest_pro)->with('top_deals',$deals)->with('women_deals',$women_deals)->with(
+            'categories',$category);
     }
 
     public function open_widgets()
@@ -90,7 +95,7 @@ class HomeController extends Controller
 
     public function save_product(Request $request){
         // dd('i am in',$request->file('other_images'));
-        $main_image_name = uniqid().$request->file('main_image')->getClientOriginalExtension();
+        $main_image_name = uniqid().'.'.$request->file('main_image')->getClientOriginalExtension();
         $image =Image::make($request->file('main_image'));
         $destinationPath = public_path('/images');
         $image->save($destinationPath.'/'.$main_image_name);
@@ -120,7 +125,7 @@ class HomeController extends Controller
 
         foreach ($request->other_images as $photo) {
 
-            $main_other_name = uniqid().$photo->getClientOriginalExtension();
+            $main_other_name = uniqid().'.'.$photo->getClientOriginalExtension();
             $image =Image::make($photo);
             $destinationPath = public_path('/images');
             $image->save($destinationPath.'/'.$main_other_name);
@@ -198,33 +203,52 @@ class HomeController extends Controller
         $pro_id = $request->input('product_id');
         $dycrypt_id = Crypt::decrypt($pro_id);
         $products = Product::where('id',$dycrypt_id)->first();
-        // dd($products['category_id']);
-        $images = [];
-        foreach ($request->other_images as $photo) {
-            $filename = $photo->store('public');
-            $real_file_name =  explode('/',$filename);
-            array_push($images,$real_file_name[1]);
-        }
-        $image_json =  json_encode($images);
-
-        $main_image_path = $request->file('main_image')->store('public');
-        $splitstr =  explode('/',$main_image_path);
         $pro = new Product;
+
+        $main_image_name = uniqid().'.'.$request->file('main_image')->getClientOriginalExtension();
+        $image =Image::make($request->file('main_image'));
+        $destinationPath = public_path('/images');
+        $image->save($destinationPath.'/'.$main_image_name);
+        $thumb  = $this->save_product_images($request->file('main_image'));
+        $pro->main_image = $main_image_name;
+        $pro->big_thumbnail = $thumb[0];
+        $pro->small_thumbnail = $thumb[1];
         $pro->product_id = $dycrypt_id;
         $pro->name = $request->input('variant_name');
         $pro->price = $request->input('price');
-        $pro->size = $request->input('size');
         $pro->color = $request->input('color');
         $pro->compare_price = $request->input('comp_price');
         $pro->quantity = $request->input('quantity');
-        $pro->main_image = $splitstr[1];
-        $pro->description = $products['description'];
         $pro->category_id = $products['category_id'];
         $pro->highlights = $products['highlights'];
-        $pro->warranty = $products['warranty'];
         $pro->subcategory_id = $products['subcategory_id'];
-        $pro->other_images = $image_json;
+         if($products['description']){
+            $pro->description = $products['description'];
+        }
+        if($products['size']){
+            $pro->size = $products['size'];
+        }
+        if($products['warranty']){
+            $pro->warranty = $products['warranty'];
+        }
         $pro->save();
+
+        foreach ($request->other_images as $photo) {
+
+            $main_other_name = uniqid().'.'.$photo->getClientOriginalExtension();
+            $image =Image::make($photo);
+            $destinationPath = public_path('/images');
+            $image->save($destinationPath.'/'.$main_other_name);
+
+            $other_thumbs = $this->save_product_images($photo);
+            $others = new Product_other_images;
+            $others->product_id = $pro->id;
+            $others->actual_image = $main_other_name;
+            $others->big_thumbnail= $other_thumbs[0];
+            $others->small_thumbnail = $other_thumbs[1];
+            $others->save();
+        }
+
         Session::flash('message', 'Variant saved Successfully!!!'); 
         return redirect('/products');
 
@@ -262,41 +286,33 @@ class HomeController extends Controller
     public function product_detail($pro_id)
     {
         $dycrypt_id = Crypt::decrypt($pro_id);
-        $product = Product::select(DB::raw('compare_price-price as diff_price,FLOOR(((compare_price-price)/compare_price)*100) as discount,products.*'))
-                ->where('id',$dycrypt_id)->first();
-        $product->other_images = json_decode($product->other_images);
-        $variants =  Product::where('product_id',$dycrypt_id)->get();
-        return view('frontend.productDetail')->with('product', $product)->with('variants', $variants);
+        $category = Category::with('children')
+                        ->where('category_id',0)
+                        ->get()->toArray();
+        $variants =[];
+        $product = Product::
+                // ->join('product_other_images', 'product_other_images.product_id', '=', 'products.id')
+                select(DB::raw('compare_price-price as diff_price,FLOOR(((compare_price-price)/compare_price)*100) as discount,products.*'))
+                ->where('products.id',$dycrypt_id)->first();
+        $other_images =  Product::where('id', $dycrypt_id)->first()->images->toArray();
+        // dd($other_images);
+        // $product->other_images = json_decode($product->other_images);
+        // $variants =  Product::where('product_id',$dycrypt_id)->get();
+        return view('frontend.productDetail')->with('product', $product)->with('other_images', $other_images)->with('categories',$category);
+    }
+
+    public function sub_product_list($subcat_id)
+    {   
+        $category = Category::with('children')
+                        ->where('category_id',0)
+                        ->get()->toArray();
+        $subcat_id = Crypt::decrypt($subcat_id);
+        $products = Product::
+                    select(DB::raw('compare_price-price as diff_price,FLOOR(((compare_price-price)/compare_price)*100) as discount,products.*'))
+                    ->where('subcategory_id',$subcat_id)->get()->toArray();
+        // dd($products);
+        return view('frontend.subProductList')->with(
+            'categories',$category)->with('products',$products);
     }
     
-     public function resizeImagePost(Request $request)
-    {
-        $this->validate($request, [
-            'title' => 'required',
-            'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-        ]);
-
-
-        $image = $request->file('image');
-        $input['imagename'] = time().'.'.$image->getClientOriginalExtension();
-     
-   
-        $destinationPath = public_path('/thumbnail');
-        $img = Image::make($image->getRealPath());
-        $img->resize(100, 100, function ($constraint) {
-            $constraint->aspectRatio();
-        })->save($destinationPath.'/'.$input['imagename']);
-
-
-        $destinationPath = public_path('/images');
-        $image->move($destinationPath, $input['imagename']);
-
-
-        $this->postImage->add($input);
-
-
-        return back()
-            ->with('success','Image Upload successful')
-            ->with('imageName',$input['imagename']);
-    }
 }
