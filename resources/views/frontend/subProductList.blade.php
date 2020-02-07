@@ -15,7 +15,7 @@
 							<div class="slidecontainer">
 								<p>min : 1</p>
 								<p>max : {{$max_price}}</p>
-							  <input type="range" min="1" max="{{$max_price}}" value="" class="slider" id="myRange">
+							  <input type="range" min="1" max="{{$max_price}}" value="0" class="slider" id="myRange">
 							  <p>Value: <span id="demo"></span></p>
 							</div>
 						</div>
@@ -195,11 +195,6 @@
 			  $('#myRange').val(this.value);
 			  filter_product();
 			}
-		    // $(".js-range-slider").ionRangeSlider({
-		    //     min: 100,
-		    //      max: "{{$max_price}}",
-		    //     from: 550
-		    // });
 
 		    $('.form-class').on('click',function(){
 		    	if($(this).hasClass('active')){

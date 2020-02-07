@@ -320,7 +320,26 @@ class HomeController extends Controller
     }
     
     public function filter_subproducts(Request $request)
-    {
-         dd($request->input());
+    {   
+        $colors = array();
+        $subcategory_id = $request->input('subcategory_id');
+        $product = Product::
+                    select(DB::raw('compare_price-price as diff_price,FLOOR(((compare_price-price)/compare_price)*100) as discount,products.*'))
+                    ->where('subcategory_id',$subcategory_id);
+        $price = $request->input('price');
+        $colors = $request->input('color');
+        if($price != 0){
+            $product = $product->where('price','<',$price);
+        }
+
+        if( $colors != null && sizeof($colors) >= 0){
+            for ($i=0; $i < sizeof($request->input('color')); $i++) { 
+               $product = $product->orWhere('color','=',$colors[$i]);
+            }
+        }
+        $product = $product->get()->toArray();
+        dd($product);
+        
+                    
     }
 }
