@@ -9,12 +9,15 @@
 				<!-- ASIDE -->
 
 				<div id="aside" class="col-md-3">
-					<form class="form-horizontal" action="{{url('filter_subproducts/'.$subcat_id)}}" method="post" enctype="multipart/form-data">
-						{{ csrf_field() }}
 						<!-- aside widget -->
 						<div class="aside">
 							<h3 class="aside-title">Filter By Price:</h3>
-							<input type="text" class="js-range-slider" name="my_range" value="" />
+							<div class="slidecontainer">
+								<p>min : 1</p>
+								<p>max : {{$max_price}}</p>
+							  <input type="range" min="1" max="{{$max_price}}" value="" class="slider" id="myRange">
+							  <p>Value: <span id="demo"></span></p>
+							</div>
 						</div>
 						<!-- aside widget -->
 
@@ -25,7 +28,7 @@
 							<ul class="color-option">
 								<!-- <li class="active"><a href="#" style="background-color:#BF6989;"></a></li> -->
 								@foreach( $colors as $color)
-								<li class="form-class color"><a href="#" style="background-color:{{$color}};"></a></li>
+								<li class="form-class filter" data-value="{{$color}}"><a href="#" style="background-color:{{$color}};"></a></li>
 								@endforeach
 							</ul>
 						</div>
@@ -51,20 +54,19 @@
 					<div class="aside">
 						<h3 class="aside-title">Filter by Brand</h3>
 						<div class="checkbox">
-						  <label><input type="checkbox" value="" name="brand">Nike</label>
+						  <label><input type="checkbox" value="Nike" name="brand" class="filter">Nike</label>
 						</div>
 						<div class="checkbox">
-						  <label><input type="checkbox" value="" name="brand">Adidas</label>
+						  <label><input type="checkbox" value="Adidas" name="brand" class="filter">Adidas</label>
 						</div>
 						<div class="checkbox">
-						  <label><input type="checkbox" value="" name="brand">Polo</label>
+						  <label><input type="checkbox" value="Polo" name="brand" class="filter">Polo</label>
 						</div>
 						<div class="checkbox">
-						  <label><input type="checkbox" value="" name="brand">Lacost</label>
+						  <label><input type="checkbox" value="Lacost" name="brand" class="filter">Lacost</label>
 						</div>
 					</div>
 					<!-- /aside widget -->
-					</form>
 					<!-- aside widget -->
 					<!-- <div class="aside">
 						<h3 class="aside-title">Filter by Gender</h3>
@@ -184,11 +186,20 @@
 
 	 <script type="text/javascript">
 		$(document).ready(function () {
-		    $(".js-range-slider").ionRangeSlider({
-		        min: 100,
-		         max: "{{$max_price}}",
-		        from: 550
-		    });
+			var slider = document.getElementById("myRange");
+			var output = document.getElementById("demo");
+			output.innerHTML = slider.value;
+
+			slider.oninput = function() {
+			  output.innerHTML = this.value;
+			  $('#myRange').val(this.value);
+			  filter_product();
+			}
+		    // $(".js-range-slider").ionRangeSlider({
+		    //     min: 100,
+		    //      max: "{{$max_price}}",
+		    //     from: 550
+		    // });
 
 		    $('.form-class').on('click',function(){
 		    	if($(this).hasClass('active')){
@@ -197,9 +208,41 @@
 		    		$(this).addClass('active')
 		    	}
 		    });
+		    $('.filter').on('click',function(){
+		 		filter_product();
+		 	});
+
+		 	function filter_product(){
+		 		var price = $('#myRange').val();		
+		 		var colors =[]; 
+		 		var brands = [];		
+		 		$.each($("input[name='brand']:checked"), function(){
+	                brands.push($(this).val());
+	            });
+
+		 		$('.color-option li').each(function(i){
+				    if($(this).is('.active')){
+				    	colors.push($(this).attr('data-value'));
+				    } 
+				});
+		 		$.ajaxSetup({
+				    headers: {
+				        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+				    }
+				});
+		 		$.ajax({
+		 			
+				  url: "{{url('filter-subproducts')}}",
+				  data: {'price':price,'subcategory_id':"{{$subcategory_id}}",'color':colors,'brands':brands},
+				  method: "POST",
+				}).done(function() {
+				  // $( this ).addClass( "done" );
+				});
+		 	}
 	 	});
 
-	 	$()
+	 	
+
 	 </script>
 @endsection
 

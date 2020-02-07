@@ -21,7 +21,7 @@ class HomeController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth', ['except' => ['open_homepage','product_detail','sub_product_list']]);
+        $this->middleware('auth', ['except' => ['open_homepage','product_detail','sub_product_list','filter_subproducts']]);
     }
 
     /**
@@ -286,7 +286,7 @@ class HomeController extends Controller
     public function product_detail($pro_id)
     {
         $dycrypt_id = Crypt::decrypt($pro_id);
-        $category = Category::with('children')
+        $categories = Category::with('children')
                         ->where('category_id',0)
                         ->get()->toArray();
         $variants =[];
@@ -295,24 +295,32 @@ class HomeController extends Controller
                 select(DB::raw('compare_price-price as diff_price,FLOOR(((compare_price-price)/compare_price)*100) as discount,products.*'))
                 ->where('products.id',$dycrypt_id)->first();
         $other_images =  Product::where('id', $dycrypt_id)->first()->images->toArray();
-        // dd($other_images);
-        // $product->other_images = json_decode($product->other_images);
-        // $variants =  Product::where('product_id',$dycrypt_id)->get();
-        return view('frontend.productDetail')->with('product', $product)->with('other_images', $other_images)->with('categories',$category);
+        return view('frontend.productDetail')->with(compact('product','other_images','categories'));
     }
 
     public function sub_product_list($subcat_id)
     {   
-        $category = Category::with('children')
+        $max_price = 0;
+        $categories = Category::with('children')
                         ->where('category_id',0)
                         ->get()->toArray();
-        $subcat_id = Crypt::decrypt($subcat_id);
+        $subcategory_id = Crypt::decrypt($subcat_id);
         $products = Product::
                     select(DB::raw('compare_price-price as diff_price,FLOOR(((compare_price-price)/compare_price)*100) as discount,products.*'))
-                    ->where('subcategory_id',$subcat_id)->get()->toArray();
-        // dd($products);
-        return view('frontend.subProductList')->with(
-            'categories',$category)->with('products',$products);
+                    ->where('subcategory_id',$subcategory_id)->get();
+        $colors = $products->map(function($item) {return $item['color'];})->toArray();
+        $sizes = $products->map(function($item) {return $item['size'];})->toArray();
+        $price = $products->map(function($item) {return $item['price'];})->toArray();
+        $sizes = array_filter($sizes);
+        $products = $products ->toArray();
+        if($price){
+            $max_price = max($price);
+        }
+        return view('frontend.subProductList')->with(compact('categories','products','colors','sizes','max_price','subcategory_id'));
     }
     
+    public function filter_subproducts(Request $request)
+    {
+         dd($request->input());
+    }
 }

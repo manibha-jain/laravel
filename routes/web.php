@@ -22,7 +22,7 @@ Route::get('/login', function () {
 Route::get('/', 'HomeController@open_homepage')->name('homepage');
 Route::get('/product-detail/{pro_id}', 'HomeController@product_detail')->name('product_detail');
 Route::get('/product-list/{subcat_id}', 'HomeController@sub_product_list');
-Route::post('/filter-subproducts/{subcat_id}', 'HomeController@filter_subproducts');
+Route::post('/filter-subproducts', 'HomeController@filter_subproducts');
 Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
