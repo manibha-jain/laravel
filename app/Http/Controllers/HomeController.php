@@ -329,7 +329,7 @@ class HomeController extends Controller
         $price = $request->input('price');
         $colors = $request->input('color');
         if($price != 0){
-            $product = $product->where('price','<',$price);
+            $product = $product->where('price','<=',$price);
         }
 
         if( $colors != null && sizeof($colors) >= 0){
@@ -338,8 +338,6 @@ class HomeController extends Controller
             }
         }
         $product = $product->get()->toArray();
-        dd($product);
-        
-                    
+        return json_encode($product);
     }
 }

@@ -129,7 +129,7 @@
 					<!-- STORE -->
 					<div id="store">
 						<!-- row -->
-						<div class="row">
+						<div class="row filter-result">
 							<!-- Product Single -->
 							@foreach ($products as $product)
 
@@ -230,7 +230,14 @@
 				  url: "{{url('filter-subproducts')}}",
 				  data: {'price':price,'subcategory_id':"{{$subcategory_id}}",'color':colors,'brands':brands},
 				  method: "POST",
-				}).done(function() {
+				}).done(function(data) {
+					// console.log(data);
+					$('.filter-result').empty();
+					var products = JSON.parse(data)
+					for (var i = 0; i < products.length; i++) {
+						// console.log('products',products[i]);
+						$('.filter-result').append('<div class="col-md-4 col-sm-6 col-xs-6"><div class="product product-single"><div class="product-thumb" style="text-align: center"><div class="product-label"><span>New</span><span class="sale">-'+products[i]['discount']+'%</span></div><?php $parameter= Crypt::encrypt($product['id']);?><a href="{{url('/product-detail/'.$parameter)}}" class="main-btn quick-view" role="button"><i class="fa fa-search-plus"></i> Quick view</a><img src="{{ url('thumbnails')}}'+'/'+products[i]["big_thumbnail"]+'" alt=""></div><div class="product-body"><h3 class="product-price">'+products[i]['price']+'<del class="product-old-price">'+products[i]['compare_price']+'</del></h3><h2 class="product-name"><a href="#">'+products[i]['name']+'</a></h2><div class="product-btns"><button class="main-btn icon-btn"><i class="fa fa-heart"></i></button><button class="main-btn icon-btn"><i class="fa fa-exchange"></i></button><button class="primary-btn add-to-cart"><i class="fa fa-shopping-cart"></i> Add to Cart</button></div></div></div></div>')
+					}
 				  // $( this ).addClass( "done" );
 				});
 		 	}
